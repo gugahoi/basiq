@@ -21,7 +21,7 @@ func main() {
 	app := cli.NewApp()
 
 	app.Authors = []*cli.Author{
-		&cli.Author{
+		{
 			Name:  "Gustavo Hoirisch",
 			Email: "github@gustavo.com.au",
 		},
