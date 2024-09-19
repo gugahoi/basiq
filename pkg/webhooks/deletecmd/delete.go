@@ -11,6 +11,7 @@ import (
 func New() *cli.Command {
 	return &cli.Command{
 		Name:    "delete",
+		Usage:   "delete a webhook by ID",
 		Aliases: []string{"rm"},
 		Action: func(ctx *cli.Context) error {
 			client := ctx.App.Metadata["client"].(*api.ClientWithResponses)

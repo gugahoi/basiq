@@ -11,7 +11,8 @@ import (
 
 func New() *cli.Command {
 	return &cli.Command{
-		Name: "get",
+		Name:  "get",
+		Usage: "retrieve a webhook by ID",
 		Action: func(ctx *cli.Context) error {
 			client := ctx.App.Metadata["client"].(*api.ClientWithResponses)
 			return exec(client, ctx.Args().First())
