@@ -16,29 +16,54 @@ import (
 // https://api.basiq.io/reference/addwebhook
 func New() *cli.Command {
 	return &cli.Command{
-		Name:  "create",
-		Usage: "create a webhook",
+		Name:      "create",
+		Usage:     "create a webhook",
+		UsageText: `create url=<url> description=<description> name=<name> events=<event1,event2,...>`,
+		Before: func(ctx *cli.Context) error {
+			if ctx.Args().Len() == 0 {
+				return fmt.Errorf("invalid number of arguments")
+			}
+			return nil
+		},
+
 		Action: func(ctx *cli.Context) error {
 			client := ctx.App.Metadata["client"].(*api.ClientWithResponses)
-			return exec(client, ctx.Args().Tail())
+			return exec(client, ctx.Args().Slice())
 		},
 	}
 }
 
-func exec(c *api.ClientWithResponses, args []string) error {
-	description := args[0]
-	url := args[1]
-	name := args[2]
-	events := args[3]
+// parseArgs parses the arguments to the create command. It accepts the following arguments in key=value format:
+// url=<url> description=<description> name=<name> events=<event1,event2,...>
+func parseArgs(args []string) *api.WebhookBody {
+	var payload api.WebhookBody
 
-	subscribedEvents := strings.Split(events, ",")
+	for _, arg := range args {
+		if strings.Contains(arg, "=") {
+			kv := strings.Split(arg, "=")
+			key := kv[0]
+			value := kv[1]
 
-	payload := api.WebhookBody{
-		Description:      &description,
-		Url:              url,
-		Name:             &name,
-		SubscribedEvents: &subscribedEvents,
+			switch key {
+			case "url":
+				payload.Url = value
+			case "description":
+				payload.Description = &value
+			case "name":
+				payload.Name = &value
+			case "events":
+				subscribedEvents := strings.Split(value, ",")
+				payload.SubscribedEvents = &subscribedEvents
+			}
+		}
 	}
+
+	log.Printf("%#v\n", payload)
+	return &payload
+}
+
+func exec(c *api.ClientWithResponses, args []string) error {
+	payload := parseArgs(args)
 
 	jsonPayload, err := json.Marshal(payload)
 	if err != nil {
