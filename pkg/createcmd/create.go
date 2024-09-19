@@ -4,15 +4,28 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"strings"
 
 	"github.com/gugahoi/basiq/internal/api"
+	"github.com/urfave/cli/v2"
 )
 
 // create creates a webhook.
 // https://api.basiq.io/reference/addwebhook
-func Create(c *api.ClientWithResponses, args []string) {
+func New() *cli.Command {
+	return &cli.Command{
+		Name:  "create",
+		Usage: "create a webhook",
+		Action: func(ctx *cli.Context) error {
+			client := ctx.App.Metadata["client"].(*api.ClientWithResponses)
+			return exec(client, ctx.Args().Tail())
+		},
+	}
+}
+
+func exec(c *api.ClientWithResponses, args []string) error {
 	description := args[0]
 	url := args[1]
 	name := args[2]
@@ -20,23 +33,25 @@ func Create(c *api.ClientWithResponses, args []string) {
 
 	subscribedEvents := strings.Split(events, ",")
 
-	webhook := api.WebhookBody{
+	payload := api.WebhookBody{
 		Description:      &description,
 		Url:              url,
 		Name:             &name,
 		SubscribedEvents: &subscribedEvents,
 	}
 
-	webhookJSON, err := json.Marshal(webhook)
+	jsonPayload, err := json.Marshal(payload)
 	if err != nil {
-		log.Fatalln("failed to serialize webhook", err)
+		return fmt.Errorf("failed to serialize webhook: %w", err)
 	}
-	response, err := c.AddWebhookWithBodyWithResponse(context.Background(), "application/json", bytes.NewReader(webhookJSON))
+	response, err := c.AddWebhookWithBodyWithResponse(context.Background(), "application/json", bytes.NewReader(jsonPayload))
 	if err != nil {
-		log.Fatalln("failed to create webhook", err)
+		return fmt.Errorf("failed to create webhook: %w", err)
 	}
 	if response.StatusCode() != 201 {
-		log.Fatalln("failed to create webhook", response.StatusCode(), string(response.Body))
+		return fmt.Errorf("failed to create webhook: [%d] %s", response.StatusCode(), string(response.Body))
 	}
 	log.Printf("%v\n", response.JSON201.Id)
+
+	return nil
 }

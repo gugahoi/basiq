@@ -1,7 +1,7 @@
 package main
 
 import (
-	"flag"
+	"fmt"
 	"log"
 	"os"
 
@@ -10,6 +10,7 @@ import (
 	"github.com/gugahoi/basiq/pkg/getcmd"
 	"github.com/gugahoi/basiq/pkg/listcmd"
 	"github.com/gugahoi/basiq/tools"
+	"github.com/urfave/cli/v2"
 )
 
 func main() {
@@ -17,34 +18,39 @@ func main() {
 	log.SetFlags(0)
 	log.SetOutput(os.Stdout)
 
-	var apikey string
-	flag.StringVar(&apikey, "apikey", "", "Basiq API key")
-	flag.Parse()
+	app := cli.NewApp()
 
-	if apikey == "" {
-		log.Fatalln("apikey is required")
+	app.Authors = []*cli.Author{
+		&cli.Author{
+			Name:  "Gustavo Hoirisch",
+			Email: "github@gustavo.com.au",
+		},
+	}
+	app.Usage = "Basiq CLI client"
+	app.Before = func(ctx *cli.Context) error {
+		apikey := ctx.String("apikey")
+		if apikey == "" {
+			return fmt.Errorf("apikey is required")
+		}
+		ctx.App.Metadata["client"] = tools.CreateClient(apikey)
+		return nil
+	}
+	app.Commands = []*cli.Command{
+		listcmd.New(),
+		createcmd.New(),
+		deletecmd.New(),
+		getcmd.New(),
+	}
+	app.Flags = []cli.Flag{
+		&cli.StringFlag{
+			Name:     "apikey",
+			EnvVars:  []string{"BASIQ_APIKEY"},
+			Usage:    "Basiq API key",
+			Required: true,
+		},
 	}
 
-	c := tools.CreateClient(apikey)
-
-	args := flag.Args()
-
-	cmd := args[0]
-
-	switch cmd {
-	case "list":
-		listcmd.List(c)
-	case "delete":
-		deletecmd.Delete(c, args[2])
-	case "create":
-		createcmd.Create(c, args[2:])
-	case "get":
-		getcmd.Get(c, args[2])
-	default:
-		usage()
+	if err := app.Run(os.Args); err != nil {
+		log.Fatalln(err)
 	}
-}
-
-func usage() {
-	log.Fatalln("available commands: list, get")
 }

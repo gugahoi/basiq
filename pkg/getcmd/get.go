@@ -2,20 +2,34 @@ package getcmd
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	"github.com/gugahoi/basiq/internal/api"
+	"github.com/urfave/cli/v2"
 )
+
+func New() *cli.Command {
+	return &cli.Command{
+		Name: "get",
+		Action: func(ctx *cli.Context) error {
+			client := ctx.App.Metadata["client"].(*api.ClientWithResponses)
+			return exec(client, ctx.Args().First())
+		},
+	}
+}
 
 // get retrieves a webhook.
 // https://api.basiq.io/reference/getwebhook
-func Get(c *api.ClientWithResponses, webhookID string) {
+func exec(c *api.ClientWithResponses, webhookID string) error {
 	webhook, err := c.GetWebhookWithResponse(context.Background(), webhookID)
 	if err != nil {
-		log.Fatalln("failed to get webhook", err)
+		return fmt.Errorf("failed to get webhook: %w", err)
 	}
 	if webhook.StatusCode() != 200 {
-		log.Fatalln("failed to get webhook", webhook.StatusCode(), string(webhook.Body))
+		return fmt.Errorf("failed to get webhook: [%d] %s", webhook.StatusCode(), string(webhook.Body))
 	}
 	log.Printf("%v\n", webhook.JSON200.Description)
+
+	return nil
 }
