@@ -5,25 +5,12 @@ import (
 	"log"
 	"os"
 
-	"github.com/gugahoi/basiq/internal/api"
 	"github.com/gugahoi/basiq/pkg/createcmd"
 	"github.com/gugahoi/basiq/pkg/deletecmd"
 	"github.com/gugahoi/basiq/pkg/getcmd"
 	"github.com/gugahoi/basiq/pkg/listcmd"
-	"github.com/oapi-codegen/oapi-codegen/v2/pkg/securityprovider"
+	"github.com/gugahoi/basiq/tools"
 )
-
-func createClient(apikey string) *api.ClientWithResponses {
-	token := getAuthToken(apikey)
-	auth, err := securityprovider.NewSecurityProviderBearerToken(token)
-
-	client, err := api.NewClientWithResponses(ServerURL, api.WithRequestEditorFn(auth.Intercept))
-	if err != nil {
-		log.Fatalln("failed to generate Basiq client", err)
-	}
-	return client
-
-}
 
 func main() {
 	// remove timestamp from log lines
@@ -38,7 +25,7 @@ func main() {
 		log.Fatalln("apikey is required")
 	}
 
-	c := createClient(apikey)
+	c := tools.CreateClient(apikey)
 
 	args := flag.Args()
 

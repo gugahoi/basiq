@@ -1,4 +1,4 @@
-package main
+package tools
 
 import (
 	"encoding/json"
@@ -6,9 +6,24 @@ import (
 	"log"
 	"net/http"
 	"strings"
+
+	"github.com/gugahoi/basiq/internal/api"
+	"github.com/oapi-codegen/oapi-codegen/v2/pkg/securityprovider"
 )
 
 const ServerURL = "https://au-api.basiq.io/"
+
+// CreateClient creates a client.
+func CreateClient(apikey string) *api.ClientWithResponses {
+	token := getAuthToken(apikey)
+	auth, err := securityprovider.NewSecurityProviderBearerToken(token)
+
+	client, err := api.NewClientWithResponses(ServerURL, api.WithRequestEditorFn(auth.Intercept))
+	if err != nil {
+		log.Fatalln("failed to generate Basiq client", err)
+	}
+	return client
+}
 
 type AuthResponse struct {
 	AccessToken string `json:"access_token"`
