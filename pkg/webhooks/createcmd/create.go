@@ -58,7 +58,6 @@ func parseArgs(args []string) *api.WebhookBody {
 		}
 	}
 
-	log.Printf("%#v\n", payload)
 	return &payload
 }
 

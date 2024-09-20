@@ -3,7 +3,8 @@ package listcmd
 import (
 	"context"
 	"fmt"
-	"log"
+	"os"
+	"text/tabwriter"
 
 	"github.com/gugahoi/basiq/internal/api"
 	"github.com/mitchellh/mapstructure"
@@ -50,8 +51,10 @@ func exec(c *api.ClientWithResponses) error {
 		return fmt.Errorf("failed to decode webhook list: %w", err)
 	}
 
+	w := tabwriter.NewWriter(os.Stdout, 0, 0, 1, ' ', 0)
 	for _, webhook := range result {
-		log.Printf("%s\t%s\t%s\t%s\n", webhook.Id, *webhook.Name, *webhook.Description, webhook.Url)
+		fmt.Fprintf(w, "%s\t%s\t%s\t%s\n", webhook.Id, *webhook.Name, *webhook.Description, webhook.Url)
 	}
+	w.Flush()
 	return nil
 }
