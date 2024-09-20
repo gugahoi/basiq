@@ -193,7 +193,7 @@ func (c *Client) GetType(ctx context.Context, id string) (*GetTypeResponse, erro
 
 type Event struct {
 	CreatedDate string
-	Data        interface{}
+	Data        json.RawMessage
 	DataRef     string
 	Entity      string
 	EventType   string
