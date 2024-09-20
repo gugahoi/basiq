@@ -369,8 +369,6 @@ func (c *Client) AddWebhookWithBody(ctx context.Context, contentType string, bod
 	if err != nil {
 		return nil, err
 	}
-	// contents , _:= ioutil.ReadAll(body)
-	// log.Printf("Request: %v", string(contents))
 
 	req = req.WithContext(ctx)
 	if err := c.applyEditors(ctx, req, reqEditors); err != nil {

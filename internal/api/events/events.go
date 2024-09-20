@@ -127,7 +127,7 @@ func (c *Client) createRequest(ctx context.Context, method string, url string) (
 		return nil, err
 	}
 
-	req, err := http.NewRequest("GET", url, nil)
+	req, err := http.NewRequest(method, url, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -166,13 +166,8 @@ func (c *Client) ListAllTypes(ctx context.Context) (*ListAllTypesResponse, error
 
 type GetTypeResponse = EventType
 
-func (c *Client) GetType(id string) (*GetTypeResponse, error) {
-	url, err := c.buildUrl(fmt.Sprintf("/events/types/%s", id))
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("GET", url, nil)
+func (c *Client) GetType(ctx context.Context, id string) (*GetTypeResponse, error) {
+	req, err := c.createRequest(ctx, "GET", fmt.Sprintf("/events/types/%s", id))
 	if err != nil {
 		return nil, err
 	}
