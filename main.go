@@ -4,7 +4,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/gugahoi/basiq/pkg/webhooks/rootcmd"
+	"github.com/gugahoi/basiq/pkg/events"
+	"github.com/gugahoi/basiq/pkg/webhooks"
 	"github.com/urfave/cli/v2"
 )
 
@@ -23,7 +24,8 @@ func main() {
 	}
 	app.Usage = "Basiq CLI client"
 	app.Commands = []*cli.Command{
-		rootcmd.New(),
+		webhooks.NewRootCmd(),
+		events.NewRootCmd(),
 	}
 	app.Flags = []cli.Flag{
 		&cli.StringFlag{

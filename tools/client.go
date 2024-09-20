@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/gugahoi/basiq/internal/api"
+	"github.com/gugahoi/basiq/internal/api/events"
 	"github.com/oapi-codegen/oapi-codegen/v2/pkg/securityprovider"
 )
 
@@ -19,6 +20,18 @@ func CreateClient(apikey string) *api.ClientWithResponses {
 	auth, err := securityprovider.NewSecurityProviderBearerToken(token)
 
 	client, err := api.NewClientWithResponses(ServerURL, api.WithRequestEditorFn(auth.Intercept))
+	if err != nil {
+		log.Fatalln("failed to generate Basiq client", err)
+	}
+	return client
+}
+
+// CreateEventsClient creates an events client.
+func CreateEventsClient(apikey string) *events.Client {
+	token := getAuthToken(apikey)
+	auth, err := securityprovider.NewSecurityProviderBearerToken(token)
+
+	client, err := events.NewClient(ServerURL, events.WithRequestEditorFn(auth.Intercept))
 	if err != nil {
 		log.Fatalln("failed to generate Basiq client", err)
 	}

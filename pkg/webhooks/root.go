@@ -1,4 +1,4 @@
-package rootcmd
+package webhooks
 
 import (
 	"fmt"
@@ -12,7 +12,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func New() *cli.Command {
+func NewRootCmd() *cli.Command {
 	return &cli.Command{
 		Name:  "webhooks",
 		Usage: "commands to manage webhooks in Basiq",
