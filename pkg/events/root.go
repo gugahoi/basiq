@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gugahoi/basiq/pkg/events/getcmd"
+	"github.com/gugahoi/basiq/pkg/events/listallcmd"
 	"github.com/gugahoi/basiq/pkg/events/listcmd"
 	"github.com/gugahoi/basiq/tools"
 	"github.com/urfave/cli/v2"
@@ -24,6 +25,7 @@ func NewRootCmd() *cli.Command {
 		Subcommands: []*cli.Command{
 			listcmd.New(),
 			getcmd.New(),
+			listallcmd.New(),
 		},
 	}
 }

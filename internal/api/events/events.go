@@ -190,3 +190,75 @@ func (c *Client) GetType(ctx context.Context, id string) (*GetTypeResponse, erro
 
 	return &result, nil
 }
+
+type Event struct {
+	CreatedDate string
+	Data        interface{}
+	DataRef     string
+	Entity      string
+	EventType   string
+	Id          string
+	Links       struct{ Self string }
+	Type        string
+	UserId      string
+}
+
+type ListAllResponse struct {
+	Data  []Event
+	Type  string
+	Links struct {
+		Self string
+	}
+}
+
+type ListAllFilters struct {
+	UserId *string
+	Entity *string
+	Type   *string
+}
+
+// ListAll lists all events
+// Filters: userId, entity, type
+func (c *Client) ListAll(ctx context.Context, filters ListAllFilters) (*ListAllResponse, error) {
+	queryStr := []string{}
+
+	if filters.UserId != nil {
+		queryStr = append(queryStr, fmt.Sprintf("user.id.eq('%s')", *filters.UserId))
+	}
+	if filters.Entity != nil {
+		queryStr = append(queryStr, fmt.Sprintf("event.entity.eq('%s')", *filters.Entity))
+	}
+	if filters.Type != nil {
+		queryStr = append(queryStr, fmt.Sprintf("event.type.eq('%s')", *filters.Type))
+	}
+
+	query := url.Values{}
+	if len(queryStr) > 0 {
+		query.Set("filter", strings.Join(queryStr, ","))
+	}
+
+	url := fmt.Sprintf("/events?%s", query.Encode())
+	req, err := c.createRequest(ctx, "GET", url)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+	body, _ := io.ReadAll(res.Body)
+
+	if res.StatusCode != 200 {
+		return nil, fmt.Errorf("failed to get events: [%d] %s", res.StatusCode, string(body))
+	}
+
+	var result ListAllResponse
+	err = json.Unmarshal(body, &result)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse events: %w", err)
+	}
+
+	return &result, nil
+}
