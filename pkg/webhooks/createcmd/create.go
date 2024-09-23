@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/gugahoi/basiq/internal/api"
@@ -75,7 +74,9 @@ func exec(c *api.ClientWithResponses, args []string) error {
 	if response.StatusCode() != 201 {
 		return fmt.Errorf("failed to create webhook: [%d] %s", response.StatusCode(), string(response.Body))
 	}
-	log.Printf("%v\n", response.JSON201.Id)
+	var prettyJSON bytes.Buffer
+	err = json.Indent(&prettyJSON, response.Body, "", "\t")
+	fmt.Printf("%s\n", string(prettyJSON.Bytes()))
 
 	return nil
 }
