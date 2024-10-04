@@ -1,6 +1,7 @@
 package events
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -121,13 +122,13 @@ func (c *Client) buildUrl(path string) (string, error) {
 	return queryURL.String(), nil
 }
 
-func (c *Client) createRequest(ctx context.Context, method string, url string) (*http.Request, error) {
+func (c *Client) createRequest(ctx context.Context, method string, url string, body io.Reader) (*http.Request, error) {
 	url, err := c.buildUrl(url)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest(method, url, nil)
+	req, err := http.NewRequest(method, url, body)
 	if err != nil {
 		return nil, err
 	}
@@ -140,7 +141,7 @@ func (c *Client) createRequest(ctx context.Context, method string, url string) (
 }
 
 func (c *Client) ListAllTypes(ctx context.Context) (*ListAllTypesResponse, error) {
-	req, err := c.createRequest(ctx, "GET", "/events/types")
+	req, err := c.createRequest(ctx, "GET", "/events/types", nil)
 	if err != nil {
 		return nil, err
 	}
@@ -166,8 +167,37 @@ func (c *Client) ListAllTypes(ctx context.Context) (*ListAllTypesResponse, error
 
 type GetTypeResponse = EventType
 
+func (c *Client) TestMessage(ctx context.Context, eventTypeID string) error {
+	var requestPayload = struct {
+		EventTypeID string `json:"eventTypeId"`
+	}{
+		EventTypeID: eventTypeID,
+	}
+
+	requestBody, err := json.Marshal(requestPayload)
+	if err != nil {
+		return err
+	}
+
+	req, err := c.createRequest(ctx, "POST", "/notifications/messages/test", bytes.NewReader(requestBody))
+	if err != nil {
+		return err
+	}
+
+	res, err := c.Client.Do(req)
+	if err != nil {
+		return err
+	}
+	body, _ := io.ReadAll(res.Body)
+	if res.StatusCode != 201 {
+		return fmt.Errorf("failed post test message: [%d] %s", res.StatusCode, string(body))
+	}
+
+	return nil
+}
+
 func (c *Client) GetType(ctx context.Context, id string) (*GetTypeResponse, error) {
-	req, err := c.createRequest(ctx, "GET", fmt.Sprintf("/events/types/%s", id))
+	req, err := c.createRequest(ctx, "GET", fmt.Sprintf("/events/types/%s", id), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -238,7 +268,7 @@ func (c *Client) ListAll(ctx context.Context, filters ListAllFilters) (*ListAllR
 	}
 
 	url := fmt.Sprintf("/events?%s", query.Encode())
-	req, err := c.createRequest(ctx, "GET", url)
+	req, err := c.createRequest(ctx, "GET", url, nil)
 	if err != nil {
 		return nil, err
 	}
