@@ -1,9 +1,10 @@
 package getcmd
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
-	"log"
 
 	"github.com/gugahoi/basiq/internal/api"
 	"github.com/urfave/cli/v2"
@@ -30,7 +31,9 @@ func exec(c *api.ClientWithResponses, webhookID string) error {
 	if webhook.StatusCode() != 200 {
 		return fmt.Errorf("failed to get webhook: [%d] %s", webhook.StatusCode(), string(webhook.Body))
 	}
-	log.Printf("%v\n", webhook.JSON200.Description)
+	var prettyJSON bytes.Buffer
+	err = json.Indent(&prettyJSON, webhook.Body, "", "\t")
+	fmt.Printf("%s\n", string(prettyJSON.Bytes()))
 
 	return nil
 }
