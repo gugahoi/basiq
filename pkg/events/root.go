@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gugahoi/basiq/pkg/events/getcmd"
+	"github.com/gugahoi/basiq/pkg/events/geteventcmd"
 	"github.com/gugahoi/basiq/pkg/events/listallcmd"
 	"github.com/gugahoi/basiq/pkg/events/listcmd"
 	"github.com/gugahoi/basiq/pkg/events/testcmd"
@@ -26,6 +27,7 @@ func NewRootCmd() *cli.Command {
 		Subcommands: []*cli.Command{
 			listcmd.New(),
 			getcmd.New(),
+			geteventcmd.New(),
 			listallcmd.New(),
 			testcmd.New(),
 		},

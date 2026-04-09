@@ -247,6 +247,34 @@ type ListAllFilters struct {
 	Type   *string
 }
 
+type GetEventResponse = Event
+
+func (c *Client) GetEvent(ctx context.Context, id string) (*GetEventResponse, error) {
+	req, err := c.createRequest(ctx, "GET", fmt.Sprintf("/events/%s", id), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := c.Client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+	body, _ := io.ReadAll(res.Body)
+
+	if res.StatusCode != 200 {
+		return nil, fmt.Errorf("failed to get event: [%d] %s", res.StatusCode, string(body))
+	}
+
+	var result GetEventResponse
+	err = json.Unmarshal(body, &result)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse event: %w", err)
+	}
+
+	return &result, nil
+}
+
 // ListAll lists all events
 // Filters: userId, entity, type
 func (c *Client) ListAll(ctx context.Context, filters ListAllFilters) (*ListAllResponse, error) {
