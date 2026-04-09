@@ -1,4 +1,4 @@
-package typescmd
+package getcmd
 
 import (
 	"context"
@@ -14,8 +14,8 @@ import (
 // New returns a cli.Command that retrieves an event type by ID.
 func New() *cli.Command {
 	return &cli.Command{
-		Name:  "types",
-		Usage: "get an event type",
+		Name:  "get",
+		Usage: "get an event type by ID",
 		Before: func(ctx *cli.Context) error {
 			if ctx.Args().Len() == 0 {
 				return fmt.Errorf("missing event type ID")
@@ -29,6 +29,7 @@ func New() *cli.Command {
 	}
 }
 
+// exec fetches and displays a single event type by ID.
 func exec(client *events.Client, id string) error {
 	data, err := client.GetType(context.Background(), id)
 	if err != nil {

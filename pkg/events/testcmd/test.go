@@ -9,6 +9,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+// New returns a cli.Command that posts a test message for an event type.
 func New() *cli.Command {
 	return &cli.Command{
 		Name:  "test",
@@ -20,6 +21,7 @@ func New() *cli.Command {
 	}
 }
 
+// exec posts a test message for the given event type ID.
 func exec(client *events.Client, eventTypeID string) error {
 	err := client.TestMessage(context.Background(), eventTypeID)
 	if err != nil {
