@@ -13,10 +13,10 @@ import (
 func New() *cli.Command {
 	return &cli.Command{
 		Name:  "get",
-		Usage: "get an event type",
+		Usage: "retrieve an event by ID",
 		Before: func(ctx *cli.Context) error {
 			if ctx.Args().Len() == 0 {
-				return fmt.Errorf("missing event type ID")
+				return fmt.Errorf("missing event ID")
 			}
 			return nil
 		},
@@ -28,12 +28,12 @@ func New() *cli.Command {
 }
 
 func exec(client *events.Client, id string) error {
-	data, err := client.GetType(context.Background(), id)
+	data, err := client.GetEvent(context.Background(), id)
 	if err != nil {
-		return fmt.Errorf("failed to get event type: %w", err)
+		return fmt.Errorf("failed to get event: %w", err)
 	}
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 4, ' ', 0)
-	fmt.Fprintf(w, "%s\t%s\n", data.Id, data.Description)
+	fmt.Fprintf(w, "%s\t%s\t%s\t%s\n", data.Id, data.Entity, data.EventType, data.Data)
 	w.Flush()
 	return nil
 }
