@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/gugahoi/basiq/pkg/events/getcmd"
-	"github.com/gugahoi/basiq/pkg/events/listallcmd"
 	"github.com/gugahoi/basiq/pkg/events/listcmd"
 	"github.com/gugahoi/basiq/pkg/events/testcmd"
 	"github.com/gugahoi/basiq/pkg/events/typescmd"
@@ -12,6 +11,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+// NewRootCmd returns the top-level "events" command with subcommands for managing events and event types.
 func NewRootCmd() *cli.Command {
 	return &cli.Command{
 		Name:  "events",
@@ -25,10 +25,9 @@ func NewRootCmd() *cli.Command {
 			return nil
 		},
 		Subcommands: []*cli.Command{
+			typescmd.New(),
 			listcmd.New(),
 			getcmd.New(),
-			typescmd.New(),
-			listallcmd.New(),
 			testcmd.New(),
 		},
 	}
