@@ -10,6 +10,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+// New returns a cli.Command that retrieves a single event by ID.
 func New() *cli.Command {
 	return &cli.Command{
 		Name:  "get",

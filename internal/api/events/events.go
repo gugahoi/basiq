@@ -249,6 +249,7 @@ type ListAllFilters struct {
 
 type GetEventResponse = Event
 
+// GetEvent retrieves a single event by its ID.
 func (c *Client) GetEvent(ctx context.Context, id string) (*GetEventResponse, error) {
 	req, err := c.createRequest(ctx, "GET", fmt.Sprintf("/events/%s", id), nil)
 	if err != nil {
