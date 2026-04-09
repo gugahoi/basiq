@@ -10,6 +10,7 @@ import (
 	"github.com/gugahoi/basiq/internal/api"
 	"github.com/gugahoi/basiq/internal/api/events"
 	"github.com/oapi-codegen/oapi-codegen/v2/pkg/securityprovider"
+	"github.com/urfave/cli/v2"
 )
 
 const ServerURL = "https://au-api.basiq.io/"
@@ -36,6 +37,18 @@ func CreateEventsClient(apikey string) *events.Client {
 		log.Fatalln("failed to generate Basiq client", err)
 	}
 	return client
+}
+
+// GetClient creates an authenticated webhook API client from the CLI context.
+func GetClient(ctx *cli.Context) *api.ClientWithResponses {
+	apikey := ctx.String("apikey")
+	return CreateClient(apikey)
+}
+
+// GetEventsClient creates an authenticated events API client from the CLI context.
+func GetEventsClient(ctx *cli.Context) *events.Client {
+	apikey := ctx.String("apikey")
+	return CreateEventsClient(apikey)
 }
 
 type AuthResponse struct {

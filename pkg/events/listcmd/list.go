@@ -7,6 +7,7 @@ import (
 	"text/tabwriter"
 
 	"github.com/gugahoi/basiq/internal/api/events"
+	"github.com/gugahoi/basiq/tools"
 	"github.com/urfave/cli/v2"
 )
 
@@ -15,7 +16,7 @@ func New() *cli.Command {
 		Name:  "list",
 		Usage: "list all events types",
 		Action: func(ctx *cli.Context) error {
-			client := ctx.App.Metadata["client"].(*events.Client)
+			client := tools.GetEventsClient(ctx)
 			return exec(client)
 		},
 	}

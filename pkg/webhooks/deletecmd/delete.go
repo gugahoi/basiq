@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/gugahoi/basiq/internal/api"
+	"github.com/gugahoi/basiq/tools"
 	"github.com/urfave/cli/v2"
 )
 
@@ -14,7 +15,7 @@ func New() *cli.Command {
 		Usage:   "delete a webhook by ID",
 		Aliases: []string{"rm"},
 		Action: func(ctx *cli.Context) error {
-			client := ctx.App.Metadata["client"].(*api.ClientWithResponses)
+			client := tools.GetClient(ctx)
 			return exec(client, ctx.Args().First())
 		},
 	}
