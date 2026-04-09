@@ -1,4 +1,4 @@
-package getcmd
+package typescmd
 
 import (
 	"context"
@@ -10,9 +10,10 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+// New returns a cli.Command that retrieves an event type by ID.
 func New() *cli.Command {
 	return &cli.Command{
-		Name:  "get",
+		Name:  "types",
 		Usage: "get an event type",
 		Before: func(ctx *cli.Context) error {
 			if ctx.Args().Len() == 0 {

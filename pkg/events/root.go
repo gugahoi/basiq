@@ -7,6 +7,7 @@ import (
 	"github.com/gugahoi/basiq/pkg/events/listallcmd"
 	"github.com/gugahoi/basiq/pkg/events/listcmd"
 	"github.com/gugahoi/basiq/pkg/events/testcmd"
+	"github.com/gugahoi/basiq/pkg/events/typescmd"
 	"github.com/gugahoi/basiq/tools"
 	"github.com/urfave/cli/v2"
 )
@@ -26,6 +27,7 @@ func NewRootCmd() *cli.Command {
 		Subcommands: []*cli.Command{
 			listcmd.New(),
 			getcmd.New(),
+			typescmd.New(),
 			listallcmd.New(),
 			testcmd.New(),
 		},
