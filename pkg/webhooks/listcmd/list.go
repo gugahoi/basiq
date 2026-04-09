@@ -7,6 +7,7 @@ import (
 	"text/tabwriter"
 
 	"github.com/gugahoi/basiq/internal/api"
+	"github.com/gugahoi/basiq/tools"
 	"github.com/mitchellh/mapstructure"
 	"github.com/urfave/cli/v2"
 )
@@ -30,7 +31,7 @@ func New() *cli.Command {
 		Usage:       "list all webhooks",
 		Description: "`list` lists all webhooks",
 		Action: func(ctx *cli.Context) error {
-			client := ctx.App.Metadata["client"].(*api.ClientWithResponses)
+			client := tools.GetClient(ctx)
 			return exec(client)
 		},
 	}
