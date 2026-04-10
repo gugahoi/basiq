@@ -9,7 +9,7 @@ import (
 
 	"github.com/gugahoi/basiq/internal/api"
 	"github.com/gugahoi/basiq/tools"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 )
 
 // create creates a webhook.
@@ -19,16 +19,16 @@ func New() *cli.Command {
 		Name:      "create",
 		Usage:     "create a webhook",
 		UsageText: `create url=<url> description=<description> name=<name> events=<event1,event2,...>`,
-		Before: func(ctx *cli.Context) error {
-			if ctx.Args().Len() == 0 {
-				return fmt.Errorf("invalid number of arguments")
+		Before: func(ctx context.Context, cmd *cli.Command) (context.Context, error) {
+			if cmd.Args().Len() == 0 {
+				return ctx, fmt.Errorf("invalid number of arguments")
 			}
-			return nil
+			return ctx, nil
 		},
 
-		Action: func(ctx *cli.Context) error {
-			client := tools.GetClient(ctx)
-			return exec(client, ctx.Args().Slice())
+		Action: func(ctx context.Context, cmd *cli.Command) error {
+			client := tools.GetClient(cmd)
+			return exec(client, cmd.Args().Slice())
 		},
 	}
 }
