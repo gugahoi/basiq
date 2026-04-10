@@ -9,6 +9,7 @@ import (
 
 	"github.com/gugahoi/basiq/internal/api"
 	"github.com/gugahoi/basiq/internal/api/events"
+	"github.com/gugahoi/basiq/internal/api/users"
 	"github.com/oapi-codegen/oapi-codegen/v2/pkg/securityprovider"
 	"github.com/urfave/cli/v3"
 )
@@ -49,6 +50,24 @@ func GetClient(cmd *cli.Command) *api.ClientWithResponses {
 func GetEventsClient(cmd *cli.Command) *events.Client {
 	apikey := cmd.String("apikey")
 	return CreateEventsClient(apikey)
+}
+
+// CreateUsersClient creates a users client.
+func CreateUsersClient(apikey string) *users.Client {
+	token := getAuthToken(apikey)
+	auth, err := securityprovider.NewSecurityProviderBearerToken(token)
+
+	client, err := users.NewClient(ServerURL, users.WithRequestEditorFn(auth.Intercept))
+	if err != nil {
+		log.Fatalln("failed to generate Basiq users client", err)
+	}
+	return client
+}
+
+// GetUsersClient creates an authenticated users API client from the CLI command.
+func GetUsersClient(cmd *cli.Command) *users.Client {
+	apikey := cmd.String("apikey")
+	return CreateUsersClient(apikey)
 }
 
 type AuthResponse struct {
