@@ -9,6 +9,7 @@ import (
 	"github.com/urfave/cli/v3"
 
 	"github.com/gugahoi/basiq/pkg/events"
+	"github.com/gugahoi/basiq/pkg/users"
 	"github.com/gugahoi/basiq/pkg/webhooks"
 )
 
@@ -29,6 +30,7 @@ func main() {
 		Commands: []*cli.Command{
 			webhooks.NewRootCmd(),
 			events.NewRootCmd(),
+			users.NewRootCmd(),
 		},
 		Flags: []cli.Flag{
 			&cli.StringFlag{
