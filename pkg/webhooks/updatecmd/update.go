@@ -10,6 +10,7 @@ import (
 
 	"github.com/gugahoi/basiq/internal/api"
 	"github.com/gugahoi/basiq/tools"
+	"github.com/mitchellh/mapstructure"
 	"github.com/urfave/cli/v3"
 )
 
@@ -20,6 +21,25 @@ func New() *cli.Command {
 		Name:      "update",
 		Usage:     "update a webhook",
 		UsageText: `update <id> url=<url> description=<description> name=<name> events=<event1,event2,...>`,
+		ShellComplete: func(ctx context.Context, cmd *cli.Command) {
+			client := tools.GetClient(cmd)
+			webhooks, err := client.ListAppWebhooksWithResponse(ctx)
+			if err != nil || webhooks.StatusCode() != 200 || webhooks.JSON200 == nil {
+				return
+			}
+			var result []struct {
+				Id   string
+				Name *string
+			}
+			_ = mapstructure.Decode(*webhooks.JSON200.Data, &result)
+			for _, w := range result {
+				if w.Name != nil {
+					fmt.Printf("%s:%s\n", w.Id, *w.Name)
+				} else {
+					fmt.Println(w.Id)
+				}
+			}
+		},
 		Before: func(ctx context.Context, cmd *cli.Command) (context.Context, error) {
 			if cmd.Args().Len() == 0 {
 				return ctx, fmt.Errorf("invalid number of arguments")
