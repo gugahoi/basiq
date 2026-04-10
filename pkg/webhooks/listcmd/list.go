@@ -9,7 +9,7 @@ import (
 	"github.com/gugahoi/basiq/internal/api"
 	"github.com/gugahoi/basiq/tools"
 	"github.com/mitchellh/mapstructure"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 )
 
 type Webhook struct {
@@ -30,8 +30,8 @@ func New() *cli.Command {
 		Aliases:     []string{"ls"},
 		Usage:       "list all webhooks",
 		Description: "`list` lists all webhooks",
-		Action: func(ctx *cli.Context) error {
-			client := tools.GetClient(ctx)
+		Action: func(ctx context.Context, cmd *cli.Command) error {
+			client := tools.GetClient(cmd)
 			return exec(client)
 		},
 	}

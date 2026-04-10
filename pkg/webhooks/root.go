@@ -7,14 +7,14 @@ import (
 	"github.com/gugahoi/basiq/pkg/webhooks/listcmd"
 	"github.com/gugahoi/basiq/pkg/webhooks/updatecmd"
 
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 )
 
 func NewRootCmd() *cli.Command {
 	return &cli.Command{
 		Name:  "webhooks",
 		Usage: "commands to manage webhooks in Basiq",
-		Subcommands: []*cli.Command{
+		Commands: []*cli.Command{
 			createcmd.New(),
 			deletecmd.New(),
 			getcmd.New(),

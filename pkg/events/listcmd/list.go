@@ -9,7 +9,7 @@ import (
 
 	"github.com/gugahoi/basiq/internal/api/events"
 	"github.com/gugahoi/basiq/tools"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 )
 
 // New returns a cli.Command that lists all events with optional filters.
@@ -18,8 +18,8 @@ func New() *cli.Command {
 		Name:      "list",
 		Usage:     "list all events",
 		UsageText: "basiq events list [user_id=<user_id>] [type=<type>] [entity=<entity>]",
-		Action: func(ctx *cli.Context) error {
-			return exec(tools.GetEventsClient(ctx), ctx.Args().Slice()...)
+		Action: func(ctx context.Context, cmd *cli.Command) error {
+			return exec(tools.GetEventsClient(cmd), cmd.Args().Slice()...)
 		},
 	}
 }

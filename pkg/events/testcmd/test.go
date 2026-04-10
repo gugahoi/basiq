@@ -6,7 +6,7 @@ import (
 
 	"github.com/gugahoi/basiq/internal/api/events"
 	"github.com/gugahoi/basiq/tools"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 )
 
 // New returns a cli.Command that posts a test message for an event type.
@@ -14,9 +14,9 @@ func New() *cli.Command {
 	return &cli.Command{
 		Name:  "test",
 		Usage: "post a test message",
-		Action: func(ctx *cli.Context) error {
-			client := tools.GetEventsClient(ctx)
-			return exec(client, ctx.Args().First())
+		Action: func(ctx context.Context, cmd *cli.Command) error {
+			client := tools.GetEventsClient(cmd)
+			return exec(client, cmd.Args().First())
 		},
 	}
 }

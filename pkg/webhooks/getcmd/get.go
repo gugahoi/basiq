@@ -8,16 +8,16 @@ import (
 
 	"github.com/gugahoi/basiq/internal/api"
 	"github.com/gugahoi/basiq/tools"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 )
 
 func New() *cli.Command {
 	return &cli.Command{
 		Name:  "get",
 		Usage: "retrieve a webhook by ID",
-		Action: func(ctx *cli.Context) error {
-			client := tools.GetClient(ctx)
-			return exec(client, ctx.Args().First())
+		Action: func(ctx context.Context, cmd *cli.Command) error {
+			client := tools.GetClient(cmd)
+			return exec(client, cmd.Args().First())
 		},
 	}
 }
