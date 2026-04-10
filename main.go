@@ -6,9 +6,10 @@ import (
 	"net/mail"
 	"os"
 
+	"github.com/urfave/cli/v3"
+
 	"github.com/gugahoi/basiq/pkg/events"
 	"github.com/gugahoi/basiq/pkg/webhooks"
-	"github.com/urfave/cli/v3"
 )
 
 func main() {
@@ -23,7 +24,8 @@ func main() {
 				Address: "github@gustavo.com.au",
 			},
 		},
-		Usage: "Basiq CLI client",
+		EnableShellCompletion: true,
+		Usage:                 "Basiq CLI client",
 		Commands: []*cli.Command{
 			webhooks.NewRootCmd(),
 			events.NewRootCmd(),

@@ -21,3 +21,16 @@ Open API specification: [https://api.basiq.io/openapi](https://api.basiq.io/open
 *   [x] [listall](https://api.basiq.io/reference/getevents)
 *   [x] [types](https://api.basiq.io/reference/geteventtypebyid)
 *   [x] [test](https://api.basiq.io/reference/testmessage)
+
+## Shell Completion
+
+Shell completion is supported out of the box:
+
+```bash
+basiq completion <bash|zsh|fish>
+
+# Example setup for ZSH, in your ~/.zshrc add:
+if type "basiq" &>/dev/null; then
+    source <(eval "basiq completion zsh")
+fi
+```
